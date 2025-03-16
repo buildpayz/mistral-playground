@@ -1,9 +1,13 @@
 """API clients for Mistral and Gemini."""
 from dataclasses import dataclass
 from typing import Optional
-
 from mistralai.client import MistralClient as Mistral
-from google import genai
+
+try:
+    import google.generativeai as genai
+    from google.generativeai import types
+except ImportError:
+    raise ImportError("Failed to import Google Generative AI. Please ensure google-generativeai and its dependencies are installed correctly.")
 from google.genai import types
 
 CONSTRUCTION_SYSTEM_PROMPT = """You are an expert construction project analyst AI. Your primary task is to analyze construction quotation documents and identify the most logical and appropriate project milestones. You should then organize the information from the quotation into a structured table based on these milestones.
