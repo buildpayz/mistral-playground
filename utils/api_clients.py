@@ -5,10 +5,9 @@ from mistralai.client import MistralClient as Mistral
 
 try:
     import google.generativeai as genai
-    from google.generativeai import types
+    GenerateContentConfig = genai.types.GenerateContentConfig
 except ImportError:
     raise ImportError("Failed to import Google Generative AI. Please ensure google-generativeai and its dependencies are installed correctly.")
-from google.genai import types
 
 CONSTRUCTION_SYSTEM_PROMPT = """You are an expert construction project analyst AI. Your primary task is to analyze construction quotation documents and identify the most logical and appropriate project milestones. You should then organize the information from the quotation into a structured table based on these milestones.
 
@@ -145,9 +144,10 @@ class GeminiClient:
         """
         response = self.client.models.generate_content(
             model="gemini-2.0-flash-thinking-exp-01-21",
-            config=types.GenerateContentConfig(
-                system_instruction=system_prompt),
-            contents=[user_prompt, ocr_text],
+            config=GenerateContentConfig(
+                system_instruction=system_prompt
+            ),
+            contents=[user_prompt, ocr_text]
         )
         
         return response.candidates[0].content.parts[0].text[3:-3]
