@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from mistralai import Mistral
+from mistralai.client import MistralClient as Mistral
 from google import genai
 from google.genai import types
 
