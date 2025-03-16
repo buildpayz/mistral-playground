@@ -1,12 +1,10 @@
 """API clients for Mistral and Gemini."""
 from dataclasses import dataclass
 from typing import Optional
-from mistralai.client import MistralClient as Mistral
 
-try:
-    import google.generativeai as genai
-except ImportError:
-    raise ImportError("Failed to import Google Generative AI. Please ensure google-generativeai and its dependencies are installed correctly.")
+from mistralai import Mistral
+from google import genai
+from google.genai import types
 
 CONSTRUCTION_SYSTEM_PROMPT = """You are an expert construction project analyst AI. Your primary task is to analyze construction quotation documents and identify the most logical and appropriate project milestones. You should then organize the information from the quotation into a structured table based on these milestones.
 
@@ -128,8 +126,7 @@ class GeminiClient:
         Args:
             api_key: Gemini API key
         """
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-2.0-flash-thinking-exp-01-21')
+        self.client = genai.Client(api_key=api_key)
     
     def generate_content(self, user_prompt: str, ocr_text: str, system_prompt: str = CONSTRUCTION_SYSTEM_PROMPT) -> str:
         """Generate content using Gemini model.
@@ -142,10 +139,11 @@ class GeminiClient:
         Returns:
             Generated content as string
         """
-        response = self.model.generate_content(
+        response = self.client.models.generate_content(
+            model="gemini-2.0-flash-thinking-exp-01-21",
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt),
             contents=[user_prompt, ocr_text],
-            generation_config={"temperature": 0.7},
-            safety_settings={"harassment": "block_none", "hate_speech": "block_none"}
         )
         
-        return response.text[3:-3] if response.text else ""
+        return response.candidates[0].content.parts[0].text[3:-3]
