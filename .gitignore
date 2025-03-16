@@ -1,3 +1,14 @@
 venv
 .env
 .qodo
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist
+build
+.DS_Store
+*.log
+utils/__pycache__/*
+__pycache__/*
+*.pyc
